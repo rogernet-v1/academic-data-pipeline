@@ -1,7 +1,7 @@
 import logging
 import hashlib
 import time
-import pyexecjs
+import execjs
 
 logger = logging.getLogger(__name__)
 
@@ -9,7 +9,6 @@ logger = logging.getLogger(__name__)
 JS_SIGN_SCRIPT = """
 function generateToken(params, timestamp) {
     var raw = "academic_v1_" + params + "_" + timestamp + "_secret_salt";
-    // 模拟前端混淆的哈希计算
     var hash = 0;
     for (var i = 0; i < raw.length; i++) {
         var char = raw.charCodeAt(i);
@@ -27,7 +26,7 @@ class RequestSigner:
     """
     def __init__(self):
         try:
-            self.ctx = pyexecjs.compile(JS_SIGN_SCRIPT)
+            self.ctx = execjs.compile(JS_SIGN_SCRIPT)
             logger.info("PyExecJS 逆向签名环境初始化成功。")
         except Exception as e:
             logger.warning(f"PyExecJS 初始化失败，启用 Python 纯算法降级方案: {e}")

@@ -11,7 +11,7 @@ class ArxivSpider:
     ArXiv 学术数据异步采集与解析器
     结合异步 HTTP 客户端与逆向签名校验
     """
-    BASE_URL = "http://export.arxiv.org/api/query"
+    BASE_URL = "https://export.arxiv.org/api/query"
 
     def __init__(self):
         self.signer = RequestSigner()
@@ -28,10 +28,10 @@ class ArxivSpider:
             "sortOrder": "descending"
         }
 
-        # 生成带有逆向签名的 Headers (用于演示安全反爬绕过)
+        # 生成带有逆向签名的 Headers
         headers = self.signer.sign_request(search_query)
 
-        async with httpx.AsyncClient(timeout=15.0) as client:
+        async with httpx.AsyncClient(timeout=15.0, follow_redirects=True) as client:
             try:
                 logger.info(f"正在发起学术 API 异步请求: query={search_query}, max_results={max_results}")
                 response = await client.get(self.BASE_URL, params=params, headers=headers)
